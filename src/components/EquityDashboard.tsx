@@ -189,8 +189,8 @@ export const EquityDashboard = () => {
             <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analysis">Analysis</TabsTrigger>
-            <TabsTrigger value="funding">Funding Rounds</TabsTrigger>
-            <TabsTrigger value="exit">Exit Scenarios</TabsTrigger>
+            <TabsTrigger value="funding">Funding</TabsTrigger>
+            <TabsTrigger value="exit">Exit</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
