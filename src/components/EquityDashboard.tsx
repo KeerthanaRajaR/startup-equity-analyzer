@@ -18,10 +18,12 @@ interface Founder {
   role: string;
 }
 
-interface VestingSchedule {
-  month: number;
-  percentage: number;
-  vestedEquity: number;
+interface FundingRound {
+  id: string;
+  round_name: string;
+  investment: number;
+  valuation: number;
+  date: string;
 }
 
 const COLORS = ['hsl(var(--chart-1))', 'hsl(var(--chart-2))', 'hsl(var(--chart-3))', 'hsl(var(--chart-4))', 'hsl(var(--chart-5))'];
@@ -44,12 +46,17 @@ export const EquityDashboard = () => {
   const [companyValuation, setCompanyValuation] = useState(1000000);
   const [totalFunding, setTotalFunding] = useState(100000);
 
-  const vestingData: VestingSchedule[] = [
-    { month: 0, percentage: 25, vestedEquity: 25 },
-    { month: 12, percentage: 50, vestedEquity: 50 },
-    { month: 24, percentage: 75, vestedEquity: 75 },
-    { month: 36, percentage: 100, vestedEquity: 100 },
-  ];
+  const [fundingRounds, setFundingRounds] = useState<FundingRound[]>([
+    { id: "1", round_name: "Seed", investment: 500000, valuation: 2000000, date: "2024-01-15" },
+    { id: "2", round_name: "Series A", investment: 2000000, valuation: 10000000, date: "2024-06-20" },
+  ]);
+
+  const [newRound, setNewRound] = useState({
+    round_name: "",
+    investment: 0,
+    valuation: 0,
+    date: ""
+  });
 
   const handleSaveChanges = () => {
     // Validation
@@ -184,10 +191,10 @@ export const EquityDashboard = () => {
 
         {/* Main Dashboard */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="analysis">Analysis</TabsTrigger>
-            <TabsTrigger value="vesting">Vesting</TabsTrigger>
+            <TabsTrigger value="funding">Funding Rounds</TabsTrigger>
             <TabsTrigger value="exit">Exit Scenarios</TabsTrigger>
           </TabsList>
 
@@ -379,71 +386,156 @@ export const EquityDashboard = () => {
             )}
           </TabsContent>
 
-          <TabsContent value="vesting" className="space-y-6">
+          <TabsContent value="funding" className="space-y-6">
             <div className="grid gap-6 lg:grid-cols-2">
               <Card className="shadow-medium">
                 <CardHeader>
-                  <CardTitle>Vesting Schedule</CardTitle>
-                  <CardDescription>Standard 4-year vesting with 1-year cliff</CardDescription>
+                  <CardTitle>Funding Timeline</CardTitle>
+                  <CardDescription>Investment rounds over time</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <ResponsiveContainer width="100%" height={300}>
-                    <LineChart data={vestingData}>
+                    <BarChart data={fundingRounds}>
                       <CartesianGrid strokeDasharray="3 3" />
-                      <XAxis dataKey="month" label={{ value: 'Months', position: 'insideBottom', offset: -5 }} />
-                      <YAxis label={{ value: 'Vested %', angle: -90, position: 'insideLeft' }} />
-                      <Tooltip />
-                      <Line 
-                        type="monotone" 
-                        dataKey="vestedEquity" 
-                        stroke="hsl(var(--chart-1))" 
-                        strokeWidth={3}
-                        dot={{ fill: "hsl(var(--chart-1))", strokeWidth: 2, r: 6 }}
+                      <XAxis dataKey="round_name" />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Investment']}
                       />
-                    </LineChart>
+                      <Bar dataKey="investment" fill="hsl(var(--chart-1))" />
+                    </BarChart>
                   </ResponsiveContainer>
                 </CardContent>
               </Card>
 
               <Card className="shadow-medium">
                 <CardHeader>
-                  <CardTitle>Vesting Details</CardTitle>
-                  <CardDescription>Individual founder vesting status</CardDescription>
+                  <CardTitle>Valuation Progression</CardTitle>
+                  <CardDescription>Company valuation growth</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {founders.map((founder) => (
-                    <div key={founder.id} className="space-y-3 p-4 border rounded-lg">
-                      <div className="flex justify-between items-center">
-                        <div className="font-medium">{founder.name}</div>
-                        <Badge variant="outline">{founder.equity}% allocated</Badge>
-                      </div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Year 1 (Cliff)</span>
-                          <span>{(founder.equity * 0.25).toFixed(1)}%</span>
-                        </div>
-                        <Progress value={25} className="h-2" />
-                        <div className="flex justify-between text-sm">
-                          <span>Year 2</span>
-                          <span>{(founder.equity * 0.5).toFixed(1)}%</span>
-                        </div>
-                        <Progress value={50} className="h-2" />
-                        <div className="flex justify-between text-sm">
-                          <span>Year 3</span>
-                          <span>{(founder.equity * 0.75).toFixed(1)}%</span>
-                        </div>
-                        <Progress value={75} className="h-2" />
-                        <div className="flex justify-between text-sm">
-                          <span>Year 4 (Fully Vested)</span>
-                          <span>{founder.equity}%</span>
-                        </div>
-                        <Progress value={100} className="h-2" />
-                      </div>
-                    </div>
-                  ))}
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={fundingRounds}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="round_name" />
+                      <YAxis />
+                      <Tooltip 
+                        formatter={(value: number) => [`$${value.toLocaleString()}`, 'Valuation']}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="valuation" 
+                        stroke="hsl(var(--chart-2))" 
+                        strokeWidth={3}
+                        dot={{ fill: "hsl(var(--chart-2))", strokeWidth: 2, r: 6 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Funding Rounds List */}
+            <Card className="shadow-medium">
+              <CardHeader>
+                <CardTitle>Funding Rounds</CardTitle>
+                <CardDescription>Manage investment rounds and valuations</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {fundingRounds.map((round) => (
+                  <div key={round.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="space-y-1">
+                      <div className="font-semibold">{round.round_name}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {new Date(round.date).toLocaleDateString()}
+                      </div>
+                    </div>
+                    <div className="text-right space-y-1">
+                      <div className="font-medium">
+                        ${round.investment.toLocaleString()} raised
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        ${round.valuation.toLocaleString()} valuation
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Add New Round */}
+            <Card className="shadow-medium">
+              <CardHeader>
+                <CardTitle>Add Funding Round</CardTitle>
+                <CardDescription>Record a new investment round</CardDescription>
+              </CardHeader>
+              <CardContent className="grid gap-4 md:grid-cols-5">
+                <div className="space-y-2">
+                  <Label htmlFor="round_name">Round Name</Label>
+                  <Input
+                    id="round_name"
+                    value={newRound.round_name}
+                    onChange={(e) => setNewRound({ ...newRound, round_name: e.target.value })}
+                    placeholder="e.g., Seed, Series A"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="investment">Investment Amount</Label>
+                  <Input
+                    id="investment"
+                    type="number"
+                    value={newRound.investment}
+                    onChange={(e) => setNewRound({ ...newRound, investment: Number(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="valuation">Post-Money Valuation</Label>
+                  <Input
+                    id="valuation"
+                    type="number"
+                    value={newRound.valuation}
+                    onChange={(e) => setNewRound({ ...newRound, valuation: Number(e.target.value) })}
+                    placeholder="0"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="date">Date</Label>
+                  <Input
+                    id="date"
+                    type="date"
+                    value={newRound.date}
+                    onChange={(e) => setNewRound({ ...newRound, date: e.target.value })}
+                  />
+                </div>
+                <div className="flex items-end">
+                  <Button 
+                    onClick={() => {
+                      if (!newRound.round_name || !newRound.investment || !newRound.valuation || !newRound.date) {
+                        toast({
+                          title: "Invalid Input",
+                          description: "Please fill in all required fields.",
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      
+                      const newId = (fundingRounds.length + 1).toString();
+                      setFundingRounds([...fundingRounds, { ...newRound, id: newId }]);
+                      setNewRound({ round_name: "", investment: 0, valuation: 0, date: "" });
+                      
+                      toast({
+                        title: "Funding Round Added",
+                        description: `${newRound.round_name} round has been recorded.`,
+                      });
+                    }}
+                    className="w-full"
+                  >
+                    Add Round
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="exit" className="space-y-6">
