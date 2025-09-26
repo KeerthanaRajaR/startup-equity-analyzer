@@ -30,9 +30,8 @@ export const EquityDashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
   const [founders, setFounders] = useState<Founder[]>([
-    { id: "1", name: "Alice Johnson", equity: 45, investment: 50000, role: "CEO" },
-    { id: "2", name: "Bob Smith", equity: 35, investment: 30000, role: "CTO" },
-    { id: "3", name: "Carol Davis", equity: 20, investment: 20000, role: "CMO" },
+    { id: "1", name: "Alice Johnson", equity: 60, investment: 50000, role: "CEO" },
+    { id: "2", name: "Bob Smith", equity: 40, investment: 30000, role: "CTO" },
   ]);
 
   const [newFounder, setNewFounder] = useState({
