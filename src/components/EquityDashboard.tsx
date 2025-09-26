@@ -32,8 +32,8 @@ export const EquityDashboard = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
   const [founders, setFounders] = useState<Founder[]>([
-    { id: "1", name: "Alice Johnson", equity: 60, investment: 50000, role: "CEO" },
-    { id: "2", name: "Bob Smith", equity: 40, investment: 30000, role: "CTO" },
+    { id: "1", name: "Alice", equity: 60, investment: 50000, role: "CEO" },
+    { id: "2", name: "Bob", equity: 40, investment: 30000, role: "CTO" },
   ]);
 
   const [newFounder, setNewFounder] = useState({
@@ -548,7 +548,7 @@ export const EquityDashboard = () => {
                         <div className="flex justify-between items-center">
                           <span className="font-medium">{multiplier}x Exit (${(exitValuation / 1000000).toFixed(1)}M)</span>
                           <Badge variant={multiplier >= 10 ? "default" : "secondary"}>
-                            {multiplier >= 10 ? "High Return" : "Moderate Return"}
+                            {multiplier >= 10 ? "High" : "Moderate"}
                           </Badge>
                         </div>
                         <div className="grid grid-cols-3 gap-2 text-sm">
