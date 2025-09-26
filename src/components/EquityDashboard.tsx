@@ -130,12 +130,7 @@ export const EquityDashboard = () => {
               Analyze and manage founder equity distribution and vesting schedules
             </p>
           </div>
-          <div className="flex gap-3">
-            <Button onClick={handleSaveChanges} className="bg-gradient-primary">
-              <Save className="mr-2 h-4 w-4" />
-              Save Changes
-            </Button>
-          </div>
+          
         </div>
 
         {/* Key Metrics */}
